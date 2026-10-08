@@ -12,7 +12,8 @@ Aşağıdaki okuma ve güncelleme adımları bu yüzden açıkça uygulanmalıd�
 
 - Proje adı: `compression`
 - Uzak repo: <https://github.com/mehmetakarim/compression> (`origin`)
-- Amaç, kapsam, teknoloji yığını ve mimari: **Henüz belirlenmedi.**
+- Amaç: Dosya (öncelikle PDF) sıkıştıran cross-platform masaüstü mini uygulaması.
+- Yığın: Tauri 2 + Rust (`src-tauri/`), paketleyicisiz HTML/CSS/JS arayüz (`ui/`).
 - Güncel durum: [brain.md](brain.md) · Mimari: [docs/architecture.md](docs/architecture.md)
 
 ## Hafıza dosyaları
@@ -63,17 +64,25 @@ Aşağıdaki okuma ve güncelleme adımları bu yüzden açıkça uygulanmalıd�
 
 ## Projeye özgü komutlar
 
-Proje henüz boş olduğu için doğrulanmış komut yoktur. Bir komut eklenirken
-hangi dizinde çalıştığı, ön koşulları ve **dosyada tanımlı** mı yoksa
-**başarıyla çalıştırıldı** mı olduğu ayrı belirtilmelidir.
+Bir komut eklenirken hangi dizinde çalıştığı, ön koşulları ve **dosyada
+tanımlı** mı yoksa **başarıyla çalıştırıldı** mı olduğu ayrı belirtilmelidir.
 
-| Amaç | Komut | Dizin | Ön koşul | Durum |
-|---|---|---|---|---|
-| Kurulum | Henüz belirlenmedi | — | — | Tanımlı değil |
-| Geliştirme | Henüz belirlenmedi | — | — | Tanımlı değil |
-| Test | Henüz belirlenmedi | — | — | Tanımlı değil |
-| Lint | Henüz belirlenmedi | — | — | Tanımlı değil |
-| Build | Henüz belirlenmedi | — | — | Tanımlı değil |
+Ön koşullar: Node.js + npm, Rust (stable) ve platformun Tauri ön koşulları
+(Windows: MSVC Build Tools + WebView2; macOS: Xcode CLT; Linux: WebKitGTK vb.).
+
+| Amaç | Komut | Dizin | Durum (2026-10-08, Windows 11) |
+|---|---|---|---|
+| Kurulum | `npm install` | kök | Çalıştırıldı, başarılı |
+| Geliştirme | `npm run dev` (`tauri dev`) | kök | Çalıştırıldı; uygulama başladı |
+| Test | `cargo test` | `src-tauri/` | Çalıştırıldı; 16 test geçti (+2 elle çalıştırılan `#[ignore]` test) |
+| Gerçek PDF testi | `COMPRESSION_SAMPLES=<klasör> cargo test --release real_samples -- --ignored --nocapture` | `src-tauri/` | Çalıştırıldı; başarılı. Çıktıları örneklerin yanına yazar |
+| Lint | `cargo clippy --all-targets` | `src-tauri/` | Çalıştırıldı; uyarı yok |
+| Build (yükleyici) | `npm run build` (`tauri build`) | kök | Tanımlı; **çalıştırılmadı** |
+| Yerel Windows yükleyici | `npx tauri build --bundles nsis` | kök | Çalıştırıldı; `src-tauri/target/release/bundle/nsis/*.exe` üretildi |
+| Release (CI) | `tauri.conf.json` sürümünü artır → commit → `git tag v<sürüm>` → `git push origin v<sürüm>`; Actions taslak release oluşturur, sonra `gh release edit v<sürüm> --draft=false` | kök | Tanımlı; ilk çalıştırma TASK-004'te |
+| İkon üretimi | `npx tauri icon app-icon.svg -o src-tauri/icons` | kök | Çalıştırıldı; mobil ikonlar silindi |
+
+Arayüz için ayrı bir JS test/lint aracı yoktur.
 
 ## Kayıt formatları
 

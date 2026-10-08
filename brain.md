@@ -5,55 +5,76 @@
 
 ## Son güncelleme
 
-2026-10-08 12:05 (UTC+03:00)
+2026-10-08 13:55 (UTC+03:00)
 
 ## Git
 
-- Aktif branch: `main` (yerelde `git init -b main` ile oluşturuldu)
-- Referans commit: `a5b8415` — Proje hafızası yapısını kur
-- Uzak repo: `origin` → <https://github.com/mehmetakarim/compression>
-  (`main` push edildi ve `origin/main`'i takip ediyor)
+- Aktif branch: `main` → `origin/main` (<https://github.com/mehmetakarim/compression>)
+- Referans: uygulama kodu ve release iş akışı tek commit'te `main`'e push
+  edildi; `v0.1.0` etiketi release iş akışını tetikler (commit kimliği için
+  `git log -1`).
 
 ## Çalışma ağacı (son kontrol)
 
-Hafıza dosyaları dışında dosya yok. Bu `brain.md` güncellemesi dışında çalışma ağacı temiz.
+Release commit'i sonrası temiz. `.claude/` (yerel önizleme ayarı) Git dışı.
 
 ## Proje durumu
 
-Proje boş: kaynak kod, README, bağımlılık veya yapılandırma dosyası yok.
-Amaç, teknoloji yığını ve mimari henüz belirlenmedi.
+Tauri 2 + Rust masaüstü uygulaması: "Sıkıştırma" (PDF, JPG, PNG, WebP, MP4)
+ve "Dönüştür" (PNG ↔ WebP) sekmeleri kodlandı.
+Ayrıntı: [docs/architecture.md](docs/architecture.md).
 
 ## Aktif hedef
 
-Henüz aktif görev seçilmedi.
+[TASK-004](docs/tasks.md) — GitHub Release v0.1.0 (Windows .exe + macOS .dmg,
+GitHub Actions). TASK-001…003 kodu bu release ile commit edildi.
 
 ## Tamamlanan son anlamlı aşama
 
-Git ile sürümlenebilir proje hafızası yapısı kuruldu (`AGENTS.md`, `CLAUDE.md`,
-`brain.md`, `docs/`), `a5b8415` olarak commit edilip `origin/main`'e push edildi.
+İki sekme eklendi: "Sıkıştırma" (mevcut ekran) ve "Dönüştür" (`convert.rs`;
+PNG → WebP kayıpsız/kayıplı, WebP → PNG). Daha önce: görsel (`raster.rs`)
+ve MP4 desteği (`video.rs`, sistem FFmpeg'i ve kurulum yardımı,
+[ADR 0003](docs/decisions/0003-mp4-icin-sistem-ffmpeg.md)), ilerleme çubuğu,
+dev modda hız düzeltmesi (BUG-003), footer imzası.
 
 ## Devam eden işler
 
-Yok.
+- v0.1.0 release iş akışı (taslak release → iki yükleyici → yayınlama).
 
 ## Engeller ve açık sorunlar
 
-- Projenin amacı ve kapsamı kullanıcı tarafından henüz tanımlanmadı.
+- [ADR 0002](docs/decisions/0002-pdf-sikistirma-motoru.md) "Önerildi":
+  saf Rust motoru için kullanıcı onayı bekleniyor.
+- CMYK/Indexed görseller, JPX/JBIG2 ve şifreli PDF'ler desteklenmiyor.
+- Flate ile saklanan keskin grafikler JPEG'e çevrilince bozulabilir.
 
-## Son doğrulamalar
+## Son doğrulamalar (2026-10-08)
 
-- Hafıza dosyaları arası göreli bağlantılar elle kontrol edildi; hedef dosyalar mevcut.
-- Uygulama testi yok (çalıştırılacak kod yok).
+- `cargo test` 16/16 geçti; `cargo clippy --all-targets` uyarısız.
+- PNG ↔ WebP dönüştürme uygulama içinde doğrulandı (sonuçlar TASK-003'te).
+- JPG/PNG/WebP/MP4 uygulama içinde sıkıştırıldı (sonuçlar TASK-002'de).
+- Makinede iki FFmpeg var: `C:\Users\Lenovo\.local\bin` (8.1.1, PATH'te
+  önce; uygulama bunu kullanıyor) ve winget Gyan.FFmpeg 9.0.2 (test
+  sırasında yanlışlıkla yükseltildi, bkz. BUG-004).
+- 31 MB / 8 sayfalık sentetik tarama dev modda 4,4 sn (önce dakikalar).
+- Fotoğraflı PDF 2,95 MB → 870 / 427 / 204 KB (Hafif/Dengeli/Güçlü);
+  çıktılar PDFium ile render edildi, sayfa sayıları korundu.
+- Arayüz tarayıcıda Tauri API taklidiyle açık/koyu temada kontrol edildi.
+- İlerleme çubuğu gerçek pencerede CDP ekran görüntüsüyle doğrulandı.
 
 ## Henüz doğrulanmamış noktalar
 
-- `CLAUDE.md` içindeki `@AGENTS.md` içe aktarımının Claude Code tarafından
-  yüklendiği yeni bir session'da gözlenmedi.
+- "Klasörde göster" düğmesi; sürükle-bırak ve dosya seçicinin ayrı ayrı.
+- Düzeltilmiş `spawn_in_new_console` ile gerçek winget kurulum penceresi.
+- macOS .dmg'nin CI'da derlenmesi ve gerçek bir Mac'te açılması.
+- macOS/Linux derlemesi.
+- Kullanıcıların gerçek (taranmış, CMYK, büyük) PDF'leriyle davranış.
 
 ## Sonraki somut adım
 
-Kullanıcıdan projenin amacını ve ilk görevi al; bunu `docs/tasks.md` içine
-`TASK-001` olarak kabul kriterleriyle kaydet.
+`gh run list --workflow release.yml` ile v0.1.0 derlemesini kontrol et;
+iki yükleyici de taslak release'teyse `gh release edit v0.1.0 --draft=false`
+ile yayınla ve TASK-004'ü güncelle. Hata varsa iş akışı günlüğünü incele.
 
 ## Bağlantılar
 

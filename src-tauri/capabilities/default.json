@@ -1,0 +1,19 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Ana pencere izinleri",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:allow-open",
+    "opener:allow-reveal-item-in-dir",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        { "url": "https://www.mehmetakar.com.tr" },
+        { "url": "https://www.mehmetakar.com.tr/*" },
+        { "url": "https://ffmpeg.org/download.html" }
+      ]
+    }
+  ]
+}

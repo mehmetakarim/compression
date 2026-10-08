@@ -1,0 +1,70 @@
+# `v*` etiketi push edildiğinde Windows (.exe) ve macOS (.dmg) yükleyicilerini
+# derler ve taslak bir GitHub Release'e yükler. Taslak, iki yükleyici de
+# yüklendikten sonra elle (veya `gh release edit --draft=false`) yayınlanır.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            args: --bundles nsis
+            rust-targets: ""
+          # Intel ve Apple Silicon Mac'lerde çalışan tek (universal) .dmg.
+          - platform: macos-latest
+            args: --target universal-apple-darwin --bundles dmg
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets }}
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - run: npm ci
+
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: Compression v__VERSION__
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+          releaseBody: |
+            PDF, JPG, PNG, WebP ve MP4 dosyalarını sıkıştıran; PNG ↔ WebP dönüştüren masaüstü uygulaması.
+
+            ## İndirme
+            - **Windows:** `Compression_*_x64-setup.exe`
+            - **macOS (Intel ve Apple Silicon):** `Compression_*_universal.dmg`
+
+            ## İlk açılışta güvenlik uyarısı
+            Uygulama henüz kod imzalı değildir.
+            - **Windows:** SmartScreen uyarısında “Ek bilgi” → “Yine de çalıştır”.
+            - **macOS:** Uygulamaya sağ tıklayıp “Aç”ı seçin veya Sistem Ayarları →
+              Gizlilik ve Güvenlik → “Yine de Aç”. “Hasarlı” uyarısı çıkarsa Terminal'de:
+              `xattr -cr /Applications/Compression.app`
+
+            ## MP4 için FFmpeg
+            MP4 sıkıştırma sistemdeki FFmpeg'i kullanır. FFmpeg yoksa uygulama
+            kurulum için yol gösterir (Windows: winget, macOS: Homebrew).

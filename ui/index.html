@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compression</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="card">
+    <nav class="tabs" role="tablist" aria-label="Ekranlar">
+      <button class="tab" id="tab-compress" role="tab" type="button" aria-selected="true" aria-controls="panel-compress">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v6m0 0-3-3m3 3 3-3M12 21v-6m0 0-3 3m3-3 3 3M4 12h16"/></svg>
+        Sıkıştırma
+      </button>
+      <button class="tab" id="tab-convert" role="tab" type="button" aria-selected="false" aria-controls="panel-convert" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13m0 0-3.5-3.5M17 8l-3.5 3.5M20 16H7m0 0 3.5-3.5M7 16l3.5 3.5"/></svg>
+        Dönüştür
+      </button>
+    </nav>
+
+    <!-- Sıkıştırma ekranı -->
+    <section class="panel" id="panel-compress" role="tabpanel" aria-labelledby="tab-compress">
+      <header class="header">
+        <div class="header-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 4v10m0-10-4 4m4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+        </div>
+        <div>
+          <h1>Dosya sıkıştır</h1>
+          <p class="muted">Sıkıştırmak istediğiniz dosyaları seçin</p>
+        </div>
+      </header>
+
+      <section class="dropzone" tabindex="0" aria-label="Sıkıştırılacak dosyaları bırakma alanı">
+        <svg class="drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 18a5 5 0 0 1-.6-9.96A6 6 0 0 1 18 9a4 4 0 0 1 0 8"/><path d="M12 12v9m0-9-3.5 3.5M12 12l3.5 3.5"/>
+        </svg>
+        <p class="drop-title">Bir dosya seçin veya buraya sürükleyip bırakın.</p>
+        <p class="muted small">PDF, JPG, PNG, WebP ve MP4 dosyaları desteklenir.</p>
+        <button class="button browse" type="button">Dosya Seç</button>
+      </section>
+
+      <div class="options" role="radiogroup" aria-label="Sıkıştırma seviyesi">
+        <span class="options-label">Seviye</span>
+        <label class="pill"><input type="radio" name="level" value="light"><span>Hafif</span></label>
+        <label class="pill"><input type="radio" name="level" value="balanced" checked><span>Dengeli</span></label>
+        <label class="pill"><input type="radio" name="level" value="strong"><span>Güçlü</span></label>
+      </div>
+
+      <section id="ffmpeg" class="notice" role="status" hidden>
+        <svg class="notice-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>
+        <div class="notice-body">
+          <p class="notice-title">MP4 için FFmpeg gerekli</p>
+          <p class="notice-text muted small"></p>
+          <code class="notice-command" hidden></code>
+          <div class="notice-actions">
+            <button id="ffmpeg-install" class="button small-button" type="button">FFmpeg'i yükle</button>
+            <button id="ffmpeg-check" class="button small-button secondary" type="button">Tekrar kontrol et</button>
+            <a id="ffmpeg-site" class="notice-link small" href="https://ffmpeg.org/download.html" target="_blank" rel="noopener" hidden>ffmpeg.org</a>
+          </div>
+        </div>
+      </section>
+
+      <ul class="files" aria-live="polite"></ul>
+    </section>
+
+    <!-- Dönüştür ekranı -->
+    <section class="panel" id="panel-convert" role="tabpanel" aria-labelledby="tab-convert" hidden>
+      <header class="header">
+        <div class="header-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 8h13m0 0-3.5-3.5M17 8l-3.5 3.5M20 16H7m0 0 3.5-3.5M7 16l3.5 3.5"/></svg>
+        </div>
+        <div>
+          <h1>Biçim dönüştür</h1>
+          <p class="muted">Görsellerinizi başka bir biçime çevirin</p>
+        </div>
+      </header>
+
+      <section class="dropzone" tabindex="0" aria-label="Dönüştürülecek dosyaları bırakma alanı">
+        <svg class="drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 18a5 5 0 0 1-.6-9.96A6 6 0 0 1 18 9a4 4 0 0 1 0 8"/><path d="M12 12v9m0-9-3.5 3.5M12 12l3.5 3.5"/>
+        </svg>
+        <p class="drop-title">Bir dosya seçin veya buraya sürükleyip bırakın.</p>
+        <p class="muted small" id="convert-hint"></p>
+        <button class="button browse" type="button">Dosya Seç</button>
+      </section>
+
+      <div class="options" role="radiogroup" aria-label="Dönüştürme türü">
+        <span class="options-label">Dönüşüm</span>
+        <label class="pill"><input type="radio" name="conversion" value="webp" checked><span>PNG → WebP</span></label>
+        <label class="pill"><input type="radio" name="conversion" value="png"><span>WebP → PNG</span></label>
+        <label class="check" id="lossless-option" title="Kapalıyken yüksek kaliteli (90) kayıplı WebP üretilir; dosya daha küçük olur.">
+          <input type="checkbox" id="lossless" checked><span>Kayıpsız</span>
+        </label>
+      </div>
+
+      <ul class="files" aria-live="polite"></ul>
+    </section>
+
+    <!-- target="_blank" linkleri opener eklentisi sistem tarayıcısında açar. -->
+    <footer class="footer">
+      Bu uygulama
+      <a href="https://www.mehmetakar.com.tr" target="_blank" rel="noopener">Mehmet Akar</a>
+      tarafından geliştirilmiştir.
+    </footer>
+  </main>
+
+  <template id="file-row">
+    <li class="file">
+      <div class="badge"></div>
+      <div class="file-info">
+        <div class="file-name"></div>
+        <div class="file-meta"><span class="size"></span> <span class="dot">•</span> <span class="status"></span></div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden>
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+      <div class="actions">
+        <span class="state" aria-hidden="true"></span>
+        <button class="icon-button reveal" type="button" title="Klasörde göster" hidden>
+          <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </button>
+        <button class="icon-button remove" type="button" title="Listeden kaldır">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>
+        </button>
+      </div>
+    </li>
+  </template>
+
+  <script src="main.js"></script>
+</body>
+</html>

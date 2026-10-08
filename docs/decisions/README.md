@@ -1,7 +1,7 @@
 # Teknik Karar Kayıtları (ADR)
 
 Bu dizin, projede gerçekten alınmış önemli teknik kararları tutar. Her karar
-ayrı bir dosyadır. Henüz kayıtlı karar yoktur.
+ayrı bir dosyadır.
 
 ## Ne zaman ADR yazılır?
 
@@ -41,4 +41,8 @@ yeniden kullanılmaz.
 
 ## Karar listesi
 
-Henüz kayıtlı karar yok.
+| No | Başlık | Durum |
+|---|---|---|
+| [0001](0001-tauri-masaustu-cercevesi.md) | Masaüstü çerçevesi olarak Tauri 2 | Kabul edildi |
+| [0002](0002-pdf-sikistirma-motoru.md) | PDF sıkıştırma motoru: lopdf + image | Önerildi |
+| [0003](0003-mp4-icin-sistem-ffmpeg.md) | MP4 için sistemdeki FFmpeg (paketlenmez) | Kabul edildi |
