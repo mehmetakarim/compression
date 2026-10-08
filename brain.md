@@ -5,18 +5,18 @@
 
 ## Son güncelleme
 
-2026-10-08 11:56 (UTC+03:00)
+2026-10-08 12:05 (UTC+03:00)
 
 ## Git
 
 - Aktif branch: `main` (yerelde `git init -b main` ile oluşturuldu)
-- Referans commit: Yok — henüz hiç commit yapılmadı
+- Referans commit: `a5b8415` — Proje hafızası yapısını kur
 - Uzak repo: `origin` → <https://github.com/mehmetakarim/compression>
-  (2026-10-08 itibarıyla `git ls-remote` boş döndü; uzak repoda commit yok)
+  (`main` push edildi ve `origin/main`'i takip ediyor)
 
 ## Çalışma ağacı (son kontrol)
 
-Hafıza dosyaları dışında dosya yok. Tüm dosyalar commit edilmemiş (untracked).
+Hafıza dosyaları dışında dosya yok. Bu `brain.md` güncellemesi dışında çalışma ağacı temiz.
 
 ## Proje durumu
 
@@ -30,7 +30,7 @@ Henüz aktif görev seçilmedi.
 ## Tamamlanan son anlamlı aşama
 
 Git ile sürümlenebilir proje hafızası yapısı kuruldu (`AGENTS.md`, `CLAUDE.md`,
-`brain.md`, `docs/`). Commit/push yapılmadı.
+`brain.md`, `docs/`), `a5b8415` olarak commit edilip `origin/main`'e push edildi.
 
 ## Devam eden işler
 
@@ -47,15 +47,13 @@ Yok.
 
 ## Henüz doğrulanmamış noktalar
 
-- Uzak repoya push erişimi denenmedi.
 - `CLAUDE.md` içindeki `@AGENTS.md` içe aktarımının Claude Code tarafından
   yüklendiği yeni bir session'da gözlenmedi.
 
 ## Sonraki somut adım
 
 Kullanıcıdan projenin amacını ve ilk görevi al; bunu `docs/tasks.md` içine
-`TASK-001` olarak kabul kriterleriyle kaydet. Kullanıcı isterse önce hafıza
-dosyalarını ilk commit olarak `main` dalına commit edip `origin`'e push et.
+`TASK-001` olarak kabul kriterleriyle kaydet.
 
 ## Bağlantılar
 
